@@ -9,27 +9,20 @@ branches:
 jobs:
 build:
 runs-on: ubuntu-latest
-
 steps:
-  - name: Baixar código
-    uses: actions/checkout@v4
+- name: Baixar codigo
+uses: actions/checkout@v4
 
   - name: Configurar Node.js
     uses: actions/setup-node@v4
     with:
       node-version: 20
 
-  - name: Instalar dependências
+  - name: Instalar dependencias
     run: npm install
 
   - name: Preparar site
     run: npm run copy:web
-
-  - name: Configurar Capacitor
-    run: npx cap add android
-
-  - name: Sincronizar Android
-    run: npx cap sync android
 
   - name: Configurar Java
     uses: actions/setup-java@v4
@@ -37,13 +30,18 @@ steps:
       distribution: temurin
       java-version: 21
 
+  - name: Gerar projeto Android
+    run: |
+      npm exec cap add android
+      npm exec cap sync android
+
   - name: Gerar APK
     working-directory: android
     run: |
       chmod +x gradlew
       ./gradlew assembleDebug
 
-  - name: Disponibilizar APK para baixar
+  - name: Disponibilizar APK
     uses: actions/upload-artifact@v4
     with:
       name: Delta-Finance1-APK
